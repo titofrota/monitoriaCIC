@@ -2,8 +2,8 @@ require 'rails_helper'
 
 describe DisciplinasController do
 	before :each do
-		allow_any_instance_of(DisciplinasController).to receive(:logged_in).and_return true
-		allow_any_instance_of(DisciplinasController).to receive(:is_admin).and_return true
+		# allow_any_instance_of(DisciplinasController).to receive(:logged_in).and_return true
+		# allow_any_instance_of(DisciplinasController).to receive(:is_admin).and_return true
 	end
 
 	describe "instance methods" do
@@ -52,6 +52,8 @@ describe DisciplinasController do
 	describe "URL methods" do
 		describe "GET #new" do
 			it "renders the :new view" do
+        allow_any_instance_of(DisciplinasController).to receive(:logged_in).and_return true
+		    allow_any_instance_of(DisciplinasController).to receive(:is_admin).and_return true
 				get :new
     			expect(response).to render_template :new
 			end
@@ -60,6 +62,8 @@ describe DisciplinasController do
 		describe "POST #create" do
 			context "Happy Path" do
         before :each do
+          allow_any_instance_of(DisciplinasController).to receive(:logged_in).and_return true
+		      allow_any_instance_of(DisciplinasController).to receive(:is_admin).and_return true
           @info = {
             nome: 'Engenharia de Software',
             fk_tipo_disciplina_id: '1',
@@ -101,6 +105,8 @@ describe DisciplinasController do
 
 			context "Sad Path" do
         before :each do
+          allow_any_instance_of(DisciplinasController).to receive(:logged_in).and_return true
+		      allow_any_instance_of(DisciplinasController).to receive(:is_admin).and_return true
           @invalid_info = {
             nome: 'Engenharia de Software',
             fk_tipo_disciplina_id: '1',
@@ -129,6 +135,8 @@ describe DisciplinasController do
 
 		describe "GET #edit" do
 			it "renders the :edit view" do
+        allow_any_instance_of(DisciplinasController).to receive(:logged_in).and_return true
+		    allow_any_instance_of(DisciplinasController).to receive(:is_admin).and_return true
 				disciplina = FactoryBot.create(:disciplina)
         params = {}
         params[:id] = 1
@@ -140,6 +148,8 @@ describe DisciplinasController do
 		describe "PUT #update" do
 			context "Happy Path" do
         before :each do
+          allow_any_instance_of(DisciplinasController).to receive(:logged_in).and_return true
+		      allow_any_instance_of(DisciplinasController).to receive(:is_admin).and_return true
           @db_disciplina = FactoryBot.create(:disciplina, id: '1')
           @info = {
             nome: 'Engenharia de Software',
@@ -178,6 +188,8 @@ describe DisciplinasController do
 
 			context "Sad Path" do
         before :each do
+          allow_any_instance_of(DisciplinasController).to receive(:logged_in).and_return true
+		      allow_any_instance_of(DisciplinasController).to receive(:is_admin).and_return true
           @db_disciplina = FactoryBot.create(:disciplina, id: '1')
           @invalid_info = {
             nome: '',
@@ -204,8 +216,11 @@ describe DisciplinasController do
 
 		describe "DELETE #destroy" do
       before :each do
+        allow_any_instance_of(DisciplinasController).to receive(:logged_in).and_return true
+		    allow_any_instance_of(DisciplinasController).to receive(:is_admin).and_return true
         @db_disciplina = FactoryBot.create(:disciplina, cod_disciplina: '10')
         @db_turma = FactoryBot.create(:turma, fk_cod_disciplina: '10')
+        @db_monitoria = FactoryBot.create(:monitoria, fk_cod_disciplina: '10', fk_turmas_id: '1' )
         @params = {}
         @params[:id] = '1'
       end
@@ -221,6 +236,27 @@ describe DisciplinasController do
         expect(subject).to redirect_to dashboard_disciplinas_path
 			end
 		end
+
+    describe "non admin user tries to delete disciplina" do
+      before :each do
+        @db_disciplina = FactoryBot.create(:disciplina, cod_disciplina: '10')
+        @db_turma = FactoryBot.create(:turma, fk_cod_disciplina: '10')
+        @db_monitoria = FactoryBot.create(:monitoria, fk_cod_disciplina: '10', fk_turmas_id: '1' )
+        @params = {}
+        @params[:id] = '1'
+      end
+
+      it "deletes the disciplina" do 
+				@db_disciplina.save
+				expect(@db_disciplina.destroy).to eq(@db_disciplina)
+			end
+
+			it "redirects to the dashboard_disciplinas_path" do
+				delete :destroy, params: @params
+        expect(flash[:notice]).to eq('Disciplina removida!')
+        expect(subject).to redirect_to dashboard_disciplinas_path
+			end
+    end
 	end
 
 end

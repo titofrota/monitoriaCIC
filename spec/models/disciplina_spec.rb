@@ -2,8 +2,24 @@ require "rails_helper"
 
 describe Disciplina do
 	before :each do
-		@disciplina = Disciplina.new(:nome => "Engenharia de Software", :fk_tipo_disciplina_id => 1, :c_prat => 4, :c_teor => 2, :c_est => 4, :c_ext => 0)
+		@disciplina = Disciplina.create(:nome => "Engenharia de Software", :fk_tipo_disciplina_id => 1, :c_prat => 4, :c_teor => 2, :c_est => 4, :c_ext => 0)
 	end
+
+  context "retorna todas as disciplinas" do
+    before :each do
+      @db_disciplina = Disciplina.create(:nome => "Banco de Dados", :fk_tipo_disciplina_id => 1, :c_prat => 4, :c_teor => 2, :c_est => 4, :c_ext => 0, :monitoria => true)
+    end
+
+    it "retorna as disciplinas com monitoria" do
+      disciplinas = Disciplina.com_monitoria
+      expect(disciplinas).to include(@db_disciplina)
+    end
+
+    it "retorna todas as disciplinas" do
+      disciplinas = Disciplina.all_disciplinas
+      expect(disciplinas).to include(@disciplina, @db_disciplina)
+    end
+  end
 
 	context "todos os atributos estao presentes" do
 		
