@@ -29,6 +29,7 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+/coverage/*
 
 # Created by https://www.gitignore.io/api/rubymine
 # Edit at https://www.gitignore.io/?templates=rubymine
@@ -65,5 +66,3 @@
 # *.ipr
 
 # End of https://www.gitignore.io/api/ruby,rails,rubymine
-
-/coverage/
